@@ -1,12 +1,37 @@
-apiVersion: v1
-kind: pod
+kind: Deployment
+apiVersion: apps/v1
 metadata:
- name: pod1
- lables:
-  zone: prod
-  version: v1
+  name: kubeserve
 spec:
- containers:
-  -name: mycon
-   image: gcr.io/sharp-avatar-368305/git-remote/
-    -containerPort: 8080
+  replicas: 3
+  minReadySeconds: 10 # wait for 45 sec before going to deploy next pod
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1  
+      maxSurge: 1        # max number of pods to run for the deployment
+  selector:
+    matchLabels:
+      app: kubeserve
+  template:
+    metadata:
+      name: kubeserve
+      labels:
+        app: kubeserve
+    spec:
+      containers:
+       - name: app
+         image: gcr.io/sharp-avatar-368305/git-remote@sha256:75a747ed6178a5ff076bf932c17a56270afae32790dc19dfdb03b06ebea80184
+        
+---
+kind: Service
+apiVersion: v1
+metadata:
+   name: kubeserve-svc
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector: 
+    app: kubeserve
