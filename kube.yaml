@@ -1,7 +1,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: kubeserve
+  name: hello-world-service
 spec:
   replicas: 3
   minReadySeconds: 10 # wait for 45 sec before going to deploy next pod
@@ -20,8 +20,8 @@ spec:
         app: kubeserve
     spec:
       containers:
-       - name: app
-         image: gcr.io/sharp-avatar-368305/git-remote@sha256:75a747ed6178a5ff076bf932c17a56270afae32790dc19dfdb03b06ebea80184
+       - name: hello-world-service
+         image: gcr.io/sharp-avatar-368305/git-remote/:v2
         
 ---
 kind: Service
